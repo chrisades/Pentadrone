@@ -1,11 +1,5 @@
 # Pentadrone
 
-A five-voice wavetable drone synthesizer built as a JUCE audio plugin. Each of the five "drones" is triggered by a dedicated MIDI note and layers five morphable wavetable oscillators through a stereo state-variable filter, with five LFOs available to modulate almost any parameter via a per-slot modulation matrix.
-
-> **Status:** Work in progress. The custom GUI (`PluginEditor`) is a placeholder — the plugin currently ships JUCE's auto-generated `GenericAudioProcessorEditor` — and preset save/load (`getStateInformation` / `setStateInformation`) is not yet implemented. See [Known Limitations](#known-limitations--todo) below.
-
----
-
 ## Overview
 
 Pentadrone is polyphonic in a specific sense: it isn't played like a keyboard, it's played like a drone box. Five fixed MIDI notes each control one "drone" voice slot. Triggering a note starts (or, in Hold mode, latches) that slot's envelope; each active slot renders five detuned/morphed wavetable oscillators through its own stereo filter and outputs a continuous sustained texture. Five LFOs — shared in configuration but computed independently per drone — can be patched to modulate cutoff, resonance, drone level, transpose, or any individual oscillator's morph/pitch/pan/level, or any LFO's own morph/speed/depth.
@@ -42,7 +36,7 @@ MIDI Note (60/62/64/65/67)
  Drone Level (envelope-scaled, oscillator-count normalized)
       │
       ▼
- Sum across all 5 drones  ──►  Master Level (fixed, see TODO)  ──►  Output
+ Sum across all 5 drones  ──►  Master Level  ──►  Output
 
  5× LFO (per drone) ──► Modulation Matrix (Parameters.h enum) ──► any of the above
 ```
@@ -61,7 +55,7 @@ All other notes are ignored. Note-off releases the corresponding drone's envelop
 
 ## Modulation Matrix
 
-Each LFO's destination is chosen from a shared list of 43 parameters (defined in `Parameters.h` / mirrored in the `AudioParameterChoice` string array in `PluginProcessor.cpp`):
+Each LFO's destination is chosen from a shared list of 43 parameters:
 
 - Global: `Cutoff L`, `Cutoff R`, `Reso L`, `Reso R`, `Drone Level`, `Morph Transpose`, `Freq Transpose`
 - Per-oscillator (×5): `Morph`, `Pitch`, `Pan`, `Level`
@@ -74,19 +68,30 @@ At the parameter layer, an LFO destination is stored per-drone via `Drone::setMo
 ```
 PluginProcessor.h/.cpp   JUCE AudioProcessor: parameter layout (APVTS), MIDI→sample-accurate
                           event splitting, per-block parameter smoothing/mapping into Synth
-PluginEditor.h/.cpp       Placeholder GUI (currently unused — see Known Limitations)
+
+PluginEditor.h/.cpp       Placeholder GUI
+
 Synth.h/.cpp              Owns the 5 Drone voices, wavetable generation, MIDI note handling,
                           voice allocation, and final mixdown
+
 Drone.h                   A single drone voice: 5 oscillators, 5 LFOs, envelope, stereo filter,
                           per-parameter modulation lookup
+
 WavetableOsc.h/.cpp       Band-limited wavetable oscillator with Hermite interpolation
+
 Wavetables.h              Generates morphable wavetable banks (square/tri/saw, and sine-inclusive
                           variant for LFOs) with harmonic count scaled to avoid aliasing
+
 Envelope.h                Custom one-pole-based ADSR envelope generator
+
 Filter.h                  Stereo TPT/zero-delay-feedback state-variable filter
+
 OnePoleFilter.h            General-purpose one-pole smoothing filter (parameter smoothing)
+
 Quantizer.h                Snaps a frequency to the nearest 12-tone-equal-temperament pitch
+
 Parameters.h               Shared enum of modulation destinations + filter cutoff constants
+
 Utils.h                    `protectYourEars` safety limiter + APVTS parameter-casting helper
 ```
 
@@ -103,20 +108,12 @@ All parameters are registered through `juce::AudioProcessorValueTreeState` in `P
 | Filter | Cutoff L/R, Resonance L/R, Env Depth |
 | Global | Hold, Quantize |
 
-Time-based envelope parameters (0–100%) are mapped exponentially to per-sample smoothing coefficients in `updateParams()`; level parameters use an exponential (`a = 12`) response curve rather than linear, to feel more natural to the ear.
-
 ## Building
 
-This is a standard JUCE audio plugin project (the presence of `JucePlugin_Name`, `AudioProcessorValueTreeState`, and `createPluginFilter()` indicates the classic JUCE plugin template). To build it you'll need:
+This is a standard JUCE audio plugin project. To build it you'll need:
 
 - [JUCE](https://juce.com/) framework
-- A JUCE project file (`.jucer`) or CMake configuration targeting this source set (not included in this file listing — regenerate one with the Projucer, or write a `CMakeLists.txt` that adds these sources to a `juce_add_plugin` target)
+- A JUCE project file (`.jucer`) or CMake configuration targeting this source set
 - A C++17-or-later toolchain
 
 The plugin can be built as VST3/AU/standalone depending on how the project/build target is configured.
-
-## Known Limitations / TODO
-
-These are flagged directly in the source and worth tracking:
-
-- **No preset persistence.** `getStateInformation` / `setStateInformation` are empty stubs — plugin state is not saved or restored by the host.
