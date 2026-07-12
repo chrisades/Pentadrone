@@ -126,6 +126,6 @@ The plugin can be built as VST3/AU/standalone depending on how the project/build
 
 - **No drone persitence.** If one drone is selected, changes made to it will not persist, so any parameter change on one drone will change the state of all others. This can be fixed by adding functionality so that each drone object only changes it's parameters if the drone currently activated and a parameter is moved.
 
-- **Startup Time.** Because of how many wavetables are generated for anti-aliasing, there is a startup time of about 45 Seconds. Though this is avoidable by reducing the amount of "mips" and adding an interpolation for them in (`WavetableOsc.h/.cpp`).
+- **Startup Time.** Because of how many wavetables are generated for anti-aliasing, there is a startup time of about 45 Seconds. Though this is avoidable by reducing the amount of "mips" and adding an interpolation for them in `WavetableOsc.h/.cpp`.
 
 - **Duophony.** Activating more than 2 drones at once causes audible distortion. Cause still unkown, though likely a computational overload.
