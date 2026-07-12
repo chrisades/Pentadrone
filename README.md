@@ -1,5 +1,7 @@
 # Pentadrone
 
+A five-voice wavetable drone synthesizer built as a JUCE audio plugin. Each of the five "drones" is triggered by a dedicated MIDI note and layers five morphable wavetable oscillators through a stereo state-variable filter, with five LFOs available to modulate almost any parameter via a per-slot modulation matrix.
+
 ## Overview
 
 Pentadrone is polyphonic in a specific sense: it isn't played like a keyboard, it's played like a drone box. Five fixed MIDI notes each control one "drone" voice slot. Triggering a note starts (or, in Hold mode, latches) that slot's envelope; each active slot renders five detuned/morphed wavetable oscillators through its own stereo filter and outputs a continuous sustained texture. Five LFOs — shared in configuration but computed independently per drone — can be patched to modulate cutoff, resonance, drone level, transpose, or any individual oscillator's morph/pitch/pan/level, or any LFO's own morph/speed/depth.
