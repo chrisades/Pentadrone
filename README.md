@@ -12,7 +12,7 @@ Pentadrone is polyphonic in a specific sense: it isn't played like a keyboard, i
 - **5 wavetable oscillators per drone**, each with:
   - Continuous waveshape morphing (square → triangle → saw) across 127 morph steps, anti-aliased via a bank of band-limited wavetables selected by pitch
   - Independent frequency, level, and stereo pan
-- **5 LFOs per drone** with their own waveshape morph, speed, and depth, each independently routable to any of 43 modulation destinations (a shared "modulation matrix" driven by an `AudioParameterChoice` per LFO)
+- **5 LFOs per drone** with their own waveshape morph, speed, and depth, each independently routable to any of 42 modulation destinations (a shared "modulation matrix" driven by an `AudioParameterChoice` per LFO)
 - **Stereo State-Variable Filter** (TPT/"zero-delay feedback" topology) with independent left/right cutoff and resonance, plus filter-envelope depth (bipolar — can open *or* close the filter over the envelope)
 - **Custom envelope generator** (attack / decay / sustain / release) driving both amplitude and filter cutoff
 - **Note quantizer** — optional snap-to-12-TET for oscillator pitch
